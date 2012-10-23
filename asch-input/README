@@ -1,0 +1,8 @@
+Astronomical Observatory Scheduler Framework
+--------------------------------------------
+
+External Dependencies:
+	All this depdendencies are available in Fedora 12.
+	   * xsd
+	   * xerces-c
+	   * xerces-c-devel

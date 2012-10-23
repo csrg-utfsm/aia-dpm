@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="ExecutiveData" type="ExecutiveData">
+		<xs:key name="ExecutiveKey">
+			<xs:selector xpath="./Executive" />
+			<xs:field xpath="@name" />
+		</xs:key>
+		<xs:key name="ObservingSeasonKey">
+			<xs:selector xpath="./ObservingSeason" />
+			<xs:field xpath="@name" />
+		</xs:key>
+		<xs:keyref name="ExecutiveRef_PIMembership" refer="ExecutiveKey">
+			<xs:selector xpath="./PIMembership/ExecutiveRef" />
+			<xs:field xpath="@executiveRef" />
+		</xs:keyref>
+		<xs:keyref name="ExecutivePercentage_Executive" refer="ExecutiveKey">
+			<xs:selector xpath="./ObservingSeason/ExecutivePercentage"/>
+			<xs:field xpath="@executiveRef"/>
+		</xs:keyref>
+	</xs:element>
+
+	<xs:complexType name="ExecutiveData">
+		<xs:sequence>
+			<xs:element name="Executive" type="Executive" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ObservingSeason" type="ObservingSeason" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="PI" type="PI" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="PI">
+		<xs:sequence>
+			<xs:element name="PIMembership" type="PIMembership"
+				minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="email" type="xs:string" use="required"/>		
+	</xs:complexType>
+
+	<xs:complexType name="ObservingSeason">
+		<xs:sequence>
+			<xs:element name="ExecutivePercentage" minOccurs="1" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="executiveRef" type="xs:string" use="required"/>
+					<xs:attribute name="percentage" type="xs:float" use="required"/>
+					<xs:attribute name="totalObsTimeForSeason" type="xs:float" use="optional"/>		
+				</xs:complexType>				
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="startDate" type="xs:dateTime" use="required"/>
+		<xs:attribute name="endDate" type="xs:dateTime" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="Executive">
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="defaultPercentage" type="xs:float" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="PIMembership">
+		<xs:attribute name="membershipPercentage" type="xs:float" use="required"/>
+		<xs:attribute name="executiveRef" type="xs:string" use="required"/>
+	</xs:complexType>
+
+</xs:schema>

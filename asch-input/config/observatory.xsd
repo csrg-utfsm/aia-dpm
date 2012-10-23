@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="ObservatoryCharacteristics">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="TelescopeEquipment" type="TelescopeEquipmentT"/>
+                <xs:element name="EquipmentOperation" type="EquipmentOperationT"/>
+                <xs:element name="Array" type="ArrayConfigurationSetT"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="TelescopeEquipmentT">
+        <xs:sequence>
+            <xs:element name="Antenna" type="AntennaT" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Pad" type="PadT" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Equipment" type="EquipmentT" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="commissionDate" type="xs:dateTime"/>
+    </xs:complexType>
+    <xs:complexType name="EquipmentT">
+        <xs:sequence>
+            <xs:element name="Equipment" type="EquipmentT" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="InitialOperation" type="AssemblyContainerOperationT" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="type" type="EquipmentTypeT"/>
+        <xs:attribute name="commissionDate" type="xs:dateTime"/>
+    </xs:complexType>
+    <xs:complexType name="AntennaT">
+        <xs:complexContent>
+            <xs:extension base="EquipmentT">
+                <xs:sequence>
+                    <xs:element name="FrontEnd" type="FrontEndT" minOccurs="0" maxOccurs="unbounded"
+                    />
+                </xs:sequence>
+                <xs:attribute name="diameter" type="xs:double"/>
+                <xs:attribute name="antennaType" type="xs:string"/>
+                <xs:attribute name="effectiveCollectingArea" type="xs:double"/>
+                <xs:attribute name="systemTemperature" type="xs:double"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="FrontEndT">
+        <xs:complexContent>
+            <xs:extension base="EquipmentT">
+                <xs:sequence>
+                    <xs:element name="Receiver" type="ReceiverT" minOccurs="0" maxOccurs="unbounded"
+                    />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="PadT">
+        <xs:complexContent>
+            <xs:extension base="EquipmentT">
+                <xs:attribute name="xPosition" type="xs:double"/>
+                <xs:attribute name="yPosition" type="xs:double"/>
+                <xs:attribute name="zPosition" type="xs:double"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ReceiverT">
+        <xs:complexContent>
+            <xs:extension base="EquipmentT">
+                <xs:attribute name="band">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="BAND_1"/>
+                            <xs:enumeration value="BAND_2"/>
+                            <xs:enumeration value="BAND_3"/>
+                            <xs:enumeration value="BAND_4"/>
+                            <xs:enumeration value="BAND_5"/>
+                            <xs:enumeration value="BAND_6"/>
+                            <xs:enumeration value="BAND_7"/>
+                            <xs:enumeration value="BAND_8"/>
+                            <xs:enumeration value="BAND_9"/>
+                            <xs:enumeration value="BAND_10"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="EquipmentOperationT">
+        <xs:sequence>
+            <xs:element name="Operation" type="AssemblyContainerOperationT" minOccurs="0"
+                maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AssemblyContainerOperationT">
+        <xs:attribute name="time" type="xs:dateTime"/>
+        <xs:attribute name="operation">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="ADD_ASSEMBLY"/>
+                    <xs:enumeration value="REMOVE_ASSEMBLY"/>
+                    <xs:enumeration value="ADD_GROUP"/>
+                    <xs:enumeration value="REMOVE_GROUP"/>
+                    <xs:enumeration value="ADD_ALL"/>
+                    <xs:enumeration value="REMOVE_ALL"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="equipmentRefId" type="xs:string"/>
+        <xs:attribute name="assembly" type="AssemblyTypeT"/>
+    </xs:complexType>
+    <xs:simpleType name="EquipmentTypeT">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ANTENNA"/>
+            <xs:enumeration value="CENTRAL_LO"/>
+            <xs:enumeration value="PHOTONIC_REFERENCE"/>
+            <xs:enumeration value="AOS_TIMING"/>
+            <xs:enumeration value="FRONTEND"/>
+            <xs:enumeration value="PAD"/>
+            <xs:enumeration value="RECEIVER"/>
+            <xs:enumeration value="BACKEND_ANALOG_RACK"/>
+            <xs:enumeration value="BACKEND_DIGITAL_RACK"/>            
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="AssemblyTypeT">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ACD"/>
+            <xs:enumeration value="ColdCart3"/>
+            <xs:enumeration value="ColdCart6"/>
+            <xs:enumeration value="ColdCart7"/>
+            <xs:enumeration value="ColdCart9"/>
+            <xs:enumeration value="ColdCart"/>
+            <xs:enumeration value="CRD"/>
+            <xs:enumeration value="Cryostat"/>
+            <xs:enumeration value="DGCK"/>
+            <xs:enumeration value="DTX"/>
+            <xs:enumeration value="FEMC"/>
+            <xs:enumeration value="FLOOG"/>
+            <xs:enumeration value="FOAD"/>
+            <xs:enumeration value="HoloDSP"/>
+            <xs:enumeration value="HoloRx"/>
+            <xs:enumeration value="IFProc"/>
+            <xs:enumeration value="IFSwitch"/>
+            <xs:enumeration value="LFRD"/>
+            <xs:enumeration value="LLC"/>
+            <xs:enumeration value="LO2"/>
+            <xs:enumeration value="LORTM"/>
+            <xs:enumeration value="LPR"/>
+            <xs:enumeration value="LS"/>
+            <xs:enumeration value="LSCommon"/>
+            <xs:enumeration value="ML"/>
+            <xs:enumeration value="MountACA"/>
+            <xs:enumeration value="Mount"/>
+            <xs:enumeration value="MountAEM"/>
+            <xs:enumeration value="MountVertex"/>
+            <xs:enumeration value="PDA"/>
+            <xs:enumeration value="PowerDist3"/>
+            <xs:enumeration value="PowerDist6"/>
+            <xs:enumeration value="PowerDist7"/>
+            <xs:enumeration value="PowerDist9"/>
+            <xs:enumeration value="PowerDist"/>
+            <xs:enumeration value="PSA"/>
+            <xs:enumeration value="PSCR"/>
+            <xs:enumeration value="PSD"/>
+            <xs:enumeration value="PSLLC"/>
+            <xs:enumeration value="PSSAS"/>
+            <xs:enumeration value="PSU"/>
+            <xs:enumeration value="SAS"/>
+            <xs:enumeration value="WCA3"/>
+            <xs:enumeration value="WCA6"/>
+            <xs:enumeration value="WCA7"/>
+            <xs:enumeration value="WCA9"/>
+            <xs:enumeration value="WCA"/>
+            <xs:enumeration value="WVR"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="ArrayConfigurationSetT">
+        <xs:sequence>
+            <xs:element name="ArrayConfiguration" type="ArrayConfigurationT" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AntennaInstallationT">
+        <xs:attribute name="startTime" type="xs:dateTime"/>
+        <xs:attribute name="endTime" type="xs:dateTime"/>
+        <xs:attribute name="pad" type="xs:string"/>
+        <xs:attribute name="antenna" type="xs:string"/>
+    </xs:complexType>
+    <xs:complexType name="ArrayConfigurationT">
+        <xs:sequence>
+            <xs:element name="AntennaInstallation" type="AntennaInstallationT" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="startTime" type="xs:dateTime"/>
+        <xs:attribute name="endTime" type="xs:dateTime"/>
+        <xs:attribute name="uvCoverage" type="xs:double"/>
+        <xs:attribute name="resolution" type="xs:double"/>
+    </xs:complexType>
+</xs:schema>

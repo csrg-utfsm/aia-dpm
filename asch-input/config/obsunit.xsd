@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="ObsProject">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="PrincipalInvestigator" type="xs:string"/>
+                <xs:element name="ScientificScore" type="xs:float"/>
+                <xs:element name="ScientificRank" type="xs:int"/>
+                <xs:element name="ObsUnitSet" type="ObsUnitSetT"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:key name="FieldSourceId">
+            <xs:selector xpath="./ObsUnitSet/SchedBlock/FieldSource"/>
+            <xs:field xpath="@id"/>
+        </xs:key>
+        <xs:keyref refer="FieldSourceId" name="FieldSourceIdRef">
+            <xs:selector xpath="./ObsUnitSet/SchedBlock/Target"/>
+            <xs:field xpath="@sourceIdRef"/>
+        </xs:keyref>
+        <xs:key name="ObsParametersId">
+            <xs:selector xpath="./ObsUnitSet/SchedBlock/ObsParameters"/>
+            <xs:field xpath="@id"/>
+        </xs:key>
+        <xs:keyref name="ObsParametersIdRef" refer="ObsParametersId">
+            <xs:selector xpath="./ObsUnitSet/SchedBlock/Target"/>
+            <xs:field xpath="@obsParametersIdRef"/>
+        </xs:keyref>
+        <xs:key name="InstrumentSpecId">
+            <xs:selector xpath="./ObsUnitSet/SchedBlock/InstrumentSpec"/>
+            <xs:field xpath="@id"/>
+        </xs:key>
+        <xs:keyref refer="InstrumentSpecId" name="InstrumentSpecIdRef">
+            <xs:selector xpath="./ObsUnitSet/SchedBlock/Target"/>
+            <xs:field xpath="@instrumentSpecIdRef"/>
+        </xs:keyref>
+        <xs:key name="TargetId">
+            <xs:selector xpath="./ObsUnitSet/SchedBlock/Target"/>
+            <xs:field xpath="@id"/>
+        </xs:key>
+        <xs:keyref refer="TargetId" name="TargetIdRef">
+            <xs:selector xpath="./ObsUnitSet/SchedBlock/SchedulingConstraints"/>
+            <xs:field xpath="@representativeTargetIdRef"/>
+        </xs:keyref>
+    </xs:element>
+    <xs:complexType name="ObsUnitT" abstract="true">
+    </xs:complexType>
+    <xs:complexType name="ObsUnitSetT">
+        <xs:complexContent>
+            <xs:extension base="ObsUnitT">
+                <xs:sequence>
+                    <xs:element name="SchedBlock" type="SchedBlockT" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="ObsUnitSet" type="ObsUnitSetT" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="SchedBlockT">
+        <xs:complexContent>
+            <xs:extension base="ObsUnitT">
+                <xs:sequence>
+                    <xs:element name="WeatherConstraints" type="WeatherConstraintsT" minOccurs="0"/>
+                    <xs:element name="SchedulingConstraints" type="SchedulingConstraintsT"/>
+                    <xs:element name="Preconditions" type="PreconditionsT"/>
+                    <xs:element name="ObsParameters" type="ObsParametersT" minOccurs="1"/>
+                    <xs:element name="InstrumentSpec" type="InstrumentSpecT" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="Target" type="TargetT" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="FieldSource" type="FieldSourceT" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="SchedBlockControl" type="SchedBlockControlT" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="WeatherConstraintsT">
+        <xs:attribute name="maxWindVelocity" type="xs:double"/>
+        <xs:attribute name="maxOpacity" type="xs:double"/>
+        <xs:attribute name="minPhaseStability" type="xs:double"/>
+        <xs:attribute name="maxSeeing" type="xs:double"/>
+    </xs:complexType>
+    <xs:complexType name="SchedulingConstraintsT">
+        <xs:attribute name="maxAngularResolution" type="xs:double"/>
+        <xs:attribute name="representativeFrequency" type="xs:double"/>
+        <xs:attribute name="representativeTargetIdRef" type="xs:NCName"/>
+    </xs:complexType>
+    <xs:complexType name="PreconditionsT">
+        <xs:attribute name="maxAllowedHA" type="xs:double"/>
+        <xs:attribute name="minAllowedHA" type="xs:double"/>
+    </xs:complexType>
+    <xs:complexType name="TargetT">
+        <xs:attribute name="id" type="xs:NCName" use="required"/>
+        <xs:attribute name="sourceIdRef" type="xs:NCName" use="required"/>
+        <xs:attribute name="instrumentSpecIdRef" type="xs:string" use="required"/>
+        <xs:attribute name="obsParametersIdRef" type="xs:NCName"/>
+    </xs:complexType>
+    <xs:complexType name="FieldSourceT">
+        <xs:attribute name="id" type="xs:NCName" use="required"/>
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="RA" type="xs:double"/>
+        <xs:attribute name="Dec" type="xs:double"/>
+        <xs:attribute name="ephemeris" type="xs:string"/>
+        <xs:attribute name="pmRA" type="xs:double"/>
+        <xs:attribute name="pmDec" type="xs:double"/>
+    </xs:complexType>
+    <xs:complexType name="InstrumentSpecT">
+        <xs:sequence>
+            <xs:element name="ObservingMode" minOccurs="0" maxOccurs="1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="OpticalPointing"/>
+                        <xs:enumeration value="SingleFieldInterferometry"/>
+                        <xs:enumeration value="TotalPower"/>
+                        <xs:enumeration value="Holography"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:choice minOccurs="1" maxOccurs="1">
+                <xs:element name="SpectralSpec" type="SpectralSpecT"/>
+                <xs:element name="OpticalCameraSpec" type="OpticalCameraSpecT"/>
+            </xs:choice>
+            <xs:element name="HardwareRequirements" type="HardwareRequirementsT"
+                minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:NCName" use="required"/>        
+    </xs:complexType>
+    <xs:complexType name="SpectralSpecT">
+    </xs:complexType>
+    <xs:complexType name="OpticalCameraSpecT">
+    </xs:complexType>
+    <xs:complexType name="ObsParametersT">
+        <xs:sequence>
+            <xs:element name="ScienceParameters" type="ScienceParametersT"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:NCName" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="ScienceParametersT">
+        <xs:attribute name="duration" type="xs:double"/>
+        <xs:attribute name="representativeBandwidth" type="xs:double"/>
+        <xs:attribute name="representativeFrequency" type="xs:double"/>
+        <xs:attribute name="sensitivityGoal" type="xs:double"/>
+    </xs:complexType>
+    <xs:complexType name="HardwareRequirementsT">
+        <xs:sequence>
+            <xs:element name="EquipmentRequirement" type="EquipmentRequirementT"
+                maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="EquipmentRequirementT">
+        <xs:sequence>
+            <xs:element name="AssemblyRequirement" type="AssemblyRequirementT"
+                minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AssemblyRequirementT">
+        <xs:attribute name="name" type="xs:string"/>
+    </xs:complexType>
+    <xs:complexType name="SchedBlockControlT">
+    	<xs:sequence>
+    		<xs:element name="MaximumTime" type="xs:double" maxOccurs="1">
+    			<xs:annotation>
+    				<xs:documentation>Time in hours</xs:documentation>
+    			</xs:annotation>
+    		</xs:element>
+    		<xs:element name="EstimatedExecutionTime" type="xs:double" maxOccurs="1">
+    			<xs:annotation>
+    				<xs:documentation>Time in hours</xs:documentation>
+    			</xs:annotation>
+    		</xs:element>
+    		<xs:element name="ArrayRequested" type="ArrayTypeT" maxOccurs="1"/>
+    		<xs:element name="IndefiniteRepeat" type="xs:boolean" maxOccurs="1"/>
+    	</xs:sequence>
+    </xs:complexType>
+    	<xs:simpleType name="ArrayTypeT">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ACA"/>
+			<xs:enumeration value="SEVEN_M"/>
+			<xs:enumeration value="TP_ARRAY"/>
+			<xs:enumeration value="TWELVE_M"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
